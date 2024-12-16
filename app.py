@@ -5,7 +5,7 @@ import pytesseract
 from PIL import Image
 import pdfplumber
 import json
-from flask_cors import CORS  # Import CORS
+from flask_cors import CORS
 
 app = Flask(__name__)
 
@@ -19,6 +19,11 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+# Route for the root ("/") URL
+@app.route('/')
+def index():
+    return jsonify({"message": "Welcome to the Document Parser API!"})
 
 @app.route('/parse', methods=['POST'])
 def parse_document():
@@ -65,4 +70,4 @@ def parse_document():
 if __name__ == '__main__':
     if not os.path.exists(UPLOAD_FOLDER):
         os.makedirs(UPLOAD_FOLDER)  # Ensure the upload folder exists
-    app.run(debug=True)
+    app.run(debug=True, host="0.0.0.0", port=5000)
