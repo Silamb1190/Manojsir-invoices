@@ -69,8 +69,20 @@ export default {
     handleFileUpload(event) {
       const file = event.target.files[0];
       if (file) {
-        this.uploadedFile = file;
-        this.documentPreview = URL.createObjectURL(file);
+        const allowedExtensions = ['image/jpeg', 'image/png', 'image/jpg', 'application/pdf'];
+        if (!allowedExtensions.includes(file.type)) {
+          this.errorMessage = "Invalid file type. Please upload an image or PDF.";
+          this.uploadedFile = null;
+          this.documentPreview = null;
+        } else {
+          this.uploadedFile = file;
+          const fileType = file.type;
+          if (fileType.startsWith("image/")) {
+            this.documentPreview = URL.createObjectURL(file);
+          } else {
+            this.documentPreview = null; // No preview for non-image files
+          }
+        }
       }
     },
 
@@ -80,21 +92,17 @@ export default {
       formData.append("file", this.uploadedFile);
 
       try {
-        // Make sure this URL points to your deployed Flask API
-        const response = await axios.post("https://manojsir-invoices.onrender.com/parse", formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        });
+        const response = await axios.post("https://manojsir-invoices.onrender.com/parse", formData);
 
         if (response.data.success) {
-          this.parsedData = response.data.parsedData; // Example: invoiceNumber, date, totalAmount
+          this.parsedData = response.data.parsedData;
+          this.uploadedFile = null;  // Clear file after successful upload
+          this.documentPreview = null; // Clear preview
         } else {
           this.errorMessage = "Failed to parse the document.";
         }
       } catch (error) {
-        console.error("Error uploading file:", error);
-        this.errorMessage = "An error occurred while processing the document.";
+        this.errorMessage = error.response ? error.response.data.message : "An error occurred while processing the document.";
       }
     }
   }
@@ -110,7 +118,7 @@ export default {
 }
 
 .upload-section {
-  margin-bottom: 20px;
+  margin-bottom: 30px;
 }
 
 .upload-btn,
@@ -129,7 +137,7 @@ export default {
 }
 
 .preview {
-  margin-top: 20px;
+  margin-top: 30px;
 }
 
 .preview-image {
@@ -158,5 +166,6 @@ table td {
 .error {
   color: red;
   margin-top: 20px;
+  font-weight: bold;
 }
 </style>
