@@ -49,8 +49,8 @@
 </template>
 
 <script>
-import axios from 'axios';
-import { VueCsv } from 'vue-csv'; // Import vue-csv
+import axios from "axios";
+import { VueCsv } from "vue-csv"; // Import vue-csv for CSV export
 
 export default {
   components: {
@@ -80,10 +80,11 @@ export default {
       formData.append("file", this.uploadedFile);
 
       try {
-        const response = await axios.post("http://your-deployed-app-url/parse", formData, {
+        // Make sure this URL points to your deployed Flask API
+        const response = await axios.post("https://manojsir-invoices.onrender.com/parse", formData, {
           headers: {
-            "Content-Type": "multipart/form-data"
-          }
+            "Content-Type": "multipart/form-data",
+          },
         });
 
         if (response.data.success) {
