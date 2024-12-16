@@ -5,8 +5,12 @@ import pytesseract
 from PIL import Image
 import pdfplumber
 import json
+from flask_cors import CORS  # Import CORS
 
 app = Flask(__name__)
+
+# Enable CORS for the app
+CORS(app)  # This will enable CORS for all routes and origins by default
 
 # Configure file upload folder
 UPLOAD_FOLDER = './uploads'
@@ -59,4 +63,6 @@ def parse_document():
     return jsonify({"success": False, "message": "Invalid file format"}), 400
 
 if __name__ == '__main__':
+    if not os.path.exists(UPLOAD_FOLDER):
+        os.makedirs(UPLOAD_FOLDER)  # Ensure the upload folder exists
     app.run(debug=True)
