@@ -49,8 +49,8 @@
 </template>
 
 <script>
-import axios from "axios";
-import { VueCsv } from "vue-csv"; // Import vue-csv
+import axios from 'axios';
+import { VueCsv } from 'vue-csv'; // Import vue-csv
 
 export default {
   components: {
@@ -80,7 +80,7 @@ export default {
       formData.append("file", this.uploadedFile);
 
       try {
-        const response = await axios.post("http://localhost:5000/parse", formData, {
+        const response = await axios.post("http://your-deployed-app-url/parse", formData, {
           headers: {
             "Content-Type": "multipart/form-data"
           }
